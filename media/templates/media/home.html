@@ -5,7 +5,7 @@
     <!-- Create New Post -->
     {% if user.is_authenticated %}
         <div class="content-section">
-            <form method="POST">
+            <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <fieldset class="form-group">
                     <legend class="border-bottom mb-4">Add a Post!</legend>
@@ -33,10 +33,12 @@
                         </div>
                     {% endif %}
                 </div>
-                <!-- <img src="{{ post.id.image.url }}" width = "100%" class="mt-2 mb-4"> -->
+                {% if post.image %}
+                    <img src="{{ post.image.url }}" class="post-image">
+                {% endif %}
                 <p class="article-content">{{ post.content }}</p>
                 <div class="d-flex flex-row">
-                    <form method="POST" action="{% url 'like' post.pk %}">
+                    <form method="POST" action="{% url 'like' post.pk %}" enctype="multipart/form-data">
                         {% csrf_token %}
                         <input type="hidden" name="next" value="{{ request.path }}">
                         <button style="background-color: transparent; border: none; box-shadow: none;" type="submit">

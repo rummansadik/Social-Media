@@ -23,7 +23,7 @@ class PostListView(View):
     def post(self, request, *args, **kwargs):
         posts = Post.objects.all().order_by('-date_posted')
         news = News.objects.all().order_by('-date_posted')
-        pc_form = PostForm(request.POST)
+        pc_form = PostForm(request.POST, request.FILES)
 
         if pc_form.is_valid():
             new_post = pc_form.save(commit=False)
@@ -43,7 +43,7 @@ class PostDetailView(DetailView):
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
-    fields = ['content']
+    fields = ['content', 'image']
 
     def form_valid(self, form):
         form.instance.author = self.request.user
