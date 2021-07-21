@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import PostListView, PostUpdateView, PostDetailView, PostDeleteView, NewsListView, NewsDetailView
+from .views import PostListView, PostUpdateView, PostDetailView, PostDeleteView, NewsListView, NewsDetailView, AddLike, DisLike
 from media.models import News
 
 urlpatterns = [
@@ -13,4 +13,7 @@ urlpatterns = [
     ).order_by('-date_posted')}), name='post-update'),
     path('post/<int:pk>/delete/', PostDeleteView.as_view(extra_context={'news': News.objects.all(
     ).order_by('-date_posted')}), name='post-delete'),
+    path('post/<int:pk>/like/', AddLike.as_view(), name='like'),
+    path('post/<int:pk>/dislike/', DisLike.as_view(), name='dislike'),
+
 ]
