@@ -1,0 +1,131 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+ 
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    
+    <!-- Fontawesome CSS -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type = "text/css" href="{% static 'media/main.css' %}">
+
+    <!-- Title -->
+    {% if title %}
+        <title>Socio Med - {{ title }}</title>
+    {% else %}
+        <title>Socio Med</title>
+    {% endif %}
+</head>
+
+
+
+<body>
+
+    <!-- Navigation Bar -->
+    <header class="site-header">
+        <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+            <div class="container">
+                <a class="navbar-brand mr-4" href="{% url 'media-home' %}">Socio Med</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarToggle">
+
+                    <!-- Navbar Left Side -->
+                    <div class="navbar-nav mr-auto">
+                        <a class="nav-item nav-link" href="{% url 'media-home' %}">Home</a>
+                    </div>
+
+                    <!-- Navbar Right Side -->
+                    <div class="navbar-nav">
+                        {% if user.is_authenticated %}
+                            <a class="nav-item nav-link" href="#"><i class='fas fa-bell' style='color:white'></i></a>
+                            <a class="nav-item nav-link" href="{% url 'profile_edit' %}"><i class='fas fa-cog' style='color:white'></i></a>
+                            <a class="nav-item nav-link" href="{% url 'profile' %}"><img class="rounded-circle mr-2" src="{{ user.profile.image.url }}" width="30px">{{ user.username }}</a>
+                            <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
+                        {% else %}
+                            <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
+                            <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+    <main role="main" class="container">
+        <div class="row">
+
+            <!-- Left Sidebar -->
+            <div class="col-md-3">
+                <div class="content-section">
+                    <p class='text-muted'>
+                        <ul class="list-group">
+                            <li class="list-group-item list-group-item-light"><i class='fas fa-home mr-4' style='color:red'></i><a href="{% url 'media-home' %}">Home</a></li>
+                            {% if user.is_authenticated %}
+                                <li class="list-group-item list-group-item-light"><i class='fas fa-user-circle mr-4' style='color:red'></i><a href="{% url 'profile' %}">Profile</a></li>
+                            {% endif %}
+                            <li class="list-group-item list-group-item-light"><i class="far fa-newspaper mr-4" style="color:red"></i><a href="{% url 'news' %}">News</a></li>
+                        </ul>
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6">
+
+                <!-- Message Alert -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Block Content -->
+                {% block content %}{% endblock %}
+            </div>
+
+            
+            <!-- Right Sidebar -->
+            <div class="col-md-3">
+                <div class="content-section">
+                    <h3>News Updates</h3>
+                    <p class='text-muted'>
+                        <ul class="list-group">
+                            {% for m in news %}
+                                <article class="media content-section">
+                                    <a href = "{% url 'news-detail' m.id %}">
+                                    <img src="{{ m.image.url }}" class = "article-img mt-2">
+                                    </a>
+                                    <div class="media-body">
+                                        <div class="article-metadata">
+                                            <small class="text-muted">{{ m.date_posted|date:"F d, y" }}</small>
+                                        </div>
+                                        <small class="article-content">{{ m.title }}</small>
+                                    </div>
+                                </article>
+                            {% endfor %}
+                        </ul>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- JavaScript -->
+    <!-- jQuery, Popper.js, Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+</body>
+</html>

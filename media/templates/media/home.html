@@ -1,0 +1,41 @@
+{% extends "media/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+    <!-- Create New Post -->
+    {% if user.is_authenticated %}
+        <div class="content-section">
+            <form method="POST">
+                {% csrf_token %}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">Add a Post!</legend>
+                    {{ pc_form | crispy }}
+                </fieldset>
+                <div class="form-group">
+                    <button class="btn btn-outline-info" type="submit">Post</button>
+                </div>
+            </form>
+        </div>
+    {% endif %}
+
+    <!-- All Posts -->
+    {% for post in posts %}
+        <article class="media content-section">
+            <img src="{{ post.author.profile.image.url }}" class = "rounded-circle article-img">
+            <div class="media-body">
+                <div class="article-metadata">
+                    <a class="mr-2" href="#">{{ post.author }}</a>
+                    <small class="text-muted">{{ post.date_posted|date:"F d, y" }}</small>
+                    {% if post.author == user %}
+                        <div>
+                            <a class="btn btn-secondary btn-sm  mt-1 mb-1" href="{% url 'post-update' post.id %}">Update</a>
+                            <a class="btn btn-danger btn-sm  mt-1 mb-1" href="{% url 'post-delete' post.id %}">Delete</a>
+                        </div>
+                    {% endif %}
+                </div>
+                <!-- <img src="{{ post.id.image.url }}" width = "100%" class="mt-2 mb-4"> -->
+                <p class="article-content">{{ post.content }}</p>
+            </div>
+        </article>
+    {% endfor %}
+{% endblock content %}

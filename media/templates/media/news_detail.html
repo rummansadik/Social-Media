@@ -1,0 +1,14 @@
+{% extends "media/base.html" %}
+{% block content %}
+    <article class="media content-section">
+        <div class="media-body">
+            <h2 class="article-title">{{ object.title }}</h2>
+            <div class="article-metadata">
+                <small class="text-muted">{{ object.date_posted|date:"F d, y" }}</small>
+            </div>
+            <img src="{{ object.image.url }}" class = "mt-2" width="100%">
+            <br>
+            <small class="article-content">{{ object.content }}</small>
+        </div>
+    </article>
+{% endblock content %}

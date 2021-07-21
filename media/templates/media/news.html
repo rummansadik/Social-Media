@@ -1,0 +1,19 @@
+{% extends "media/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+    <!-- All News -->
+    {% for m in news %}
+        <article class="media content-section">
+            <div class="media-body">
+                <h2 class="article-title"><a href = "{% url 'news-detail' m.id %}">{{ m.title }}</a></h2>
+                <div class="article-metadata">
+                    <small class="text-muted">{{ m.date_posted|date:"F d, y" }}</small>
+                </div>
+                <img src="{{ m.image.url }}" class = " mt-2">
+                <br>
+                <small class="article-content">{{ m.content }}</small>
+            </div>
+        </article>
+    {% endfor %}
+{% endblock content %}
