@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models.fields import NullBooleanField
+from django.db.models.fields import DateTimeField, NullBooleanField
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
@@ -53,3 +53,10 @@ class News(models.Model):
             output_size = (300, 300)
             img.thumbnail(output_size)
             img.save(self.image.path)
+
+
+class Comment(models.Model):
+    comment = models.TextField()
+    created_on = models.DateTimeField(default=timezone.now)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey('Post', on_delete=models.CASCADE)

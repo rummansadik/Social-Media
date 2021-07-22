@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import DeleteView, UpdateView, DetailView
-from .models import Post, News
-from .forms import PostForm
+from .models import Comment, Post, News, Comment
+from .forms import PostForm, CommentForm
 from django.views import View
 
 
@@ -11,10 +11,12 @@ class PostListView(View):
 
     def get(self, request, *args, **kwargs):
         pc_form = PostForm()
+        c_form = CommentForm()
         posts = Post.objects.all().order_by('-date_posted')
         news = News.objects.all().order_by('-date_posted')
         context = {
             'pc_form': pc_form,
+            'c_form': c_form,
             'posts': posts,
             'news': news,
         }
@@ -24,6 +26,7 @@ class PostListView(View):
         posts = Post.objects.all().order_by('-date_posted')
         news = News.objects.all().order_by('-date_posted')
         pc_form = PostForm(request.POST, request.FILES)
+        c_form = CommentForm(request.POST)
 
         if pc_form.is_valid():
             new_post = pc_form.save(commit=False)
@@ -31,14 +34,46 @@ class PostListView(View):
             new_post.save()
         context = {
             'pc_form': pc_form,
+            'c_form': c_form,
             'posts': posts,
             'news': news,
         }
         return render(request, 'media/home.html', context)
 
 
-class PostDetailView(DetailView):
-    model = Post
+class PostDetailView(View):
+    def get(self, request, pk, *args, **kwargs):
+        post = Post.objects.get(pk=pk)
+        c_form = CommentForm()
+        news = News.objects.all().order_by('-date_posted')
+        comments = Comment.objects.filter(post=post).order_by('-created_on')
+
+        context = {
+            'post': post,
+            'c_form': c_form,
+            'comments': comments,
+            'news': news,
+        }
+        return render(request, 'media/post_detail.html', context)
+
+    def post(self, request, pk, *args, **kwargs):
+        post = Post.objects.get(pk=pk)
+        c_form = CommentForm(request.POST)
+        news = News.objects.all().order_by('-date_posted')
+        if c_form.is_valid():
+            new_comment = c_form.save(commit=False)
+            new_comment.author = request.user
+            new_comment.post = post
+            new_comment.save()
+
+        comments = Comment.objects.filter(post=post).order_by('-created_on')
+        context = {
+            'post': post,
+            'c_form': c_form,
+            'comments': comments,
+            'news': news,
+        }
+        return render(request, 'media/post_detail.html', context)
 
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):

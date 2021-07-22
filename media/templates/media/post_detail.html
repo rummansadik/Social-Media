@@ -1,16 +1,17 @@
 {% extends "media/base.html" %}
+{% load crispy_forms_tags %}
 {% block content %}
     <article class="media content-section">
-        <img src="{{ object.author.profile.image.url }}" class = "rounded-circle article-img">
+        <img src="{{ post.author.profile.image.url }}" class = "rounded-circle article-img">
         <div class="media-body">
             <div class="article-metadata">
-                <a class="mr-2" href="#">{{ object.author }}</a>
-                <small class="text-muted">{{ object.date_posted|date:"F d, y" }}</small>
+                <a class="mr-2" href="#">{{ post.author }}</a>
+                <small class="text-muted">{{ post.date_posted|date:"F d, y" }}</small>
             </div>
-            {% if object.image %}
-                <img src="{{ object.image.url }}" class="post-image">
+            {% if post.image %}
+                <img src="{{ post.image.url }}">
             {% endif %}
-            <p class="article-content">{{ object.content }}</p>
+            <p class="article-content">{{ post.content }}</p>
             <div class="d-flex flex-row">
                 <form method="POST" action="{% url 'like' post.pk %}">
                     {% csrf_token %}
@@ -28,6 +29,28 @@
                     </button>
                 </form>
             </div>
+            <div class="row mt-3 mb-5">
+                <div class="col-md-12 col-sm-12">
+                    <form method="POST"  enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ c_form | crispy }}
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-success mt-3 ">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {% for comment in comments %}
+            <div class="row mt-3 mb-5 border-bottom">
+                <div class="col-md-12 col-sm-12">
+                    <p><strong>{{ comment.author }}</strong> {{ comment.created_on }}</p>
+                    <p>{{ comment.comment }}</p>
+                </div>
+            </div>
+            {% endfor %}
         </div>
+
+        
     </article>
 {% endblock content %}
