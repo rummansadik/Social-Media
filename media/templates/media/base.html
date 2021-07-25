@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_tags %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -47,7 +48,8 @@
                     <!-- Navbar Right Side -->
                     <div class="navbar-nav">
                         {% if user.is_authenticated %}
-                            <a class="nav-item nav-link" href="#"><i class='fas fa-bell' style='color:white'></i></a>
+                            <a class="nav-item nav-link" href="#"><i class='fas fa-bell' style='color:white'>{{ show_notifications }}</i></a>
+                            <!-- <div class="nav-link">{{ show_notifications }} -->
                             <a class="nav-item nav-link" href="{% url 'profile_edit' %}"><i class='fas fa-cog' style='color:white'></i></a>
                             <a class="nav-item nav-link" href="{% url 'profile' %}"><img class="rounded-circle mr-2" src="{{ user.profile.image.url }}" width="30px">{{ user.username }}</a>
                             <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
@@ -75,6 +77,7 @@
                                 <li class="list-group-item list-group-item-light"><i class='fas fa-user-circle mr-4' style='color:red'></i><a href="{% url 'profile' %}">Profile</a></li>
                             {% endif %}
                             <li class="list-group-item list-group-item-light"><i class="far fa-newspaper mr-4" style="color:red"></i><a href="{% url 'news' %}">News</a></li>
+                            <li class="list-group-item list-group-item-light"><i class='fas fa-vote-yea mr-4' style='color:red'></i><a href="{% url 'voting' %}">Voting</a></li>
                         </ul>
                     </p>
                 </div>

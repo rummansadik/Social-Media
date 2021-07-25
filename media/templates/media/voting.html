@@ -1,0 +1,15 @@
+{% extends "media/base.html" %}
+{% load custom_tags %}
+{% block content %}
+    {% for user in users %}
+        <article class="media content-section">
+            <div class="row">
+                <img src="{{ user.profile.image.url }}" class = "rounded-circle article-img">
+                <div class="media-body">
+                        <a class="mr-2 text-muted" href="#">{{ user.username }}</a>
+                        <a class="btn btn-danger btn-sm  mt-1 mb-1" href="#">Vote</a>  
+                </div>
+            </div>
+        </article>
+    {% endfor %}
+{% endblock content %}

@@ -1,6 +1,6 @@
 from media.forms import CommentForm
 from django.urls import path
-from .views import PostListView, PostUpdateView, PostDetailView, PostDeleteView, NewsListView, NewsDetailView, AddLike, DisLike
+from .views import PostListView, PostUpdateView, PostDetailView, PostDeleteView, NewsListView, NewsDetailView, AddLike, DisLike, VoteView
 from media.models import News
 
 urlpatterns = [
@@ -15,5 +15,6 @@ urlpatterns = [
     ).order_by('-date_posted')}), name='post-delete'),
     path('post/<int:pk>/like/', AddLike.as_view(), name='like'),
     path('post/<int:pk>/dislike/', DisLike.as_view(), name='dislike'),
+    path('voting/', VoteView.as_view(), name='voting'),
 
 ]

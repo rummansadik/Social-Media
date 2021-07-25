@@ -1,3 +1,4 @@
+from django.db.models.base import Model
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -5,6 +6,8 @@ from django.views.generic import DeleteView, UpdateView, DetailView
 from .models import Comment, Post, News, Comment
 from .forms import PostForm, CommentForm
 from django.views import View
+from django.contrib.auth.models import Group, User
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 
 class PostListView(View):
@@ -177,3 +180,23 @@ class DisLike(LoginRequiredMixin, View):
             post.dislikes.remove(request.user)
         next = request.POST.get('next', '/')
         return HttpResponseRedirect(next)
+
+
+class VoteView(View):
+    def post(self, request, *args, **kwargs):
+        news = News.objects.all().order_by('-date_posted')
+        users = User.objects.filter(groups__name='Verified User')
+        context = {
+            'news': news,
+            'users': users
+        }
+        return render(request, 'media/voting.html', context)
+
+    def get(self, request, *args, **kwargs):
+        news = News.objects.all().order_by('-date_posted')
+        users = User.objects.filter(groups__name='Verified User')
+        context = {
+            'news': news,
+            'users': users
+        }
+        return render(request, 'media/voting.html', context)
