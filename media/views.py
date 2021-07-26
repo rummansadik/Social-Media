@@ -1,5 +1,7 @@
+from users.models import Profile, Vote
+from django.contrib.auth import models
 from django.db.models.base import Model
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.http import HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import DeleteView, UpdateView, DetailView
@@ -7,6 +9,7 @@ from .models import Comment, Post, News, Comment
 from .forms import PostForm, CommentForm
 from django.views import View
 from django.contrib.auth.models import Group, User
+from users.models import Profile
 from django.contrib.auth.decorators import login_required, user_passes_test
 
 
@@ -185,18 +188,63 @@ class DisLike(LoginRequiredMixin, View):
 class VoteView(View):
     def post(self, request, *args, **kwargs):
         news = News.objects.all().order_by('-date_posted')
-        users = User.objects.filter(groups__name='Verified User')
+        users = User.username.filter(groups__name='Verified User')
+        profile = Profile.objects.all()
         context = {
+            'profile': profile,
             'news': news,
-            'users': users
+            'users': users,
         }
         return render(request, 'media/voting.html', context)
 
     def get(self, request, *args, **kwargs):
         news = News.objects.all().order_by('-date_posted')
         users = User.objects.filter(groups__name='Verified User')
+        profile = Profile.objects.all()
         context = {
+            'profile': profile,
             'news': news,
-            'users': users
+            'users': users,
         }
         return render(request, 'media/voting.html', context)
+
+
+def vote_user(request):
+    user = request.user
+    if request.method == 'POST':
+        profile_id = request.POST.get('profile_id')
+        profile_obj = Profile.objects.get(id=profile_id)
+
+        if user in profile_obj.votes.all():
+            profile_obj.votes.remove(user)
+        else:
+            profile_obj.votes.add(user)
+
+        vote, created = Vote.objects.get_or_create(
+            user=user, value=profile_id)
+
+        if not created:
+            if vote.value == 'Vote':
+                vote.value == 'Downvote'
+            else:
+                vote.value = 'Vote'
+        vote.save()
+    return redirect('voting')
+# class VoteView(View):
+#     def post(self, request, *args, **kwargs):
+#         news = News.objects.all().order_by('-date_posted')
+#         users = User.objects.filter(groups__name='Verified User')
+#         context = {
+#             'news': news,
+#             'users': users
+#         }
+#         return render(request, 'media/voting.html', context)
+
+#     def get(self, request, *args, **kwargs):
+#         news = News.objects.all().order_by('-date_posted')
+#         users = User.objects.filter(groups__name='Verified User')
+#         context = {
+#             'news': news,
+#             'users': users
+#         }
+#         return render(request, 'media/voting.html', context)
