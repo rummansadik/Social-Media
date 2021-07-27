@@ -1,8 +1,9 @@
+from django import template
 from users.models import Profile, Vote
 from django.contrib.auth import models
 from django.db.models.base import Model
 from django.shortcuts import redirect, render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import DeleteView, UpdateView, DetailView
 from .models import Comment, Post, News, Comment
@@ -11,6 +12,8 @@ from django.views import View
 from django.contrib.auth.models import Group, User
 from users.models import Profile
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.template import loader
+from notifications.signals import notify
 
 
 class PostListView(View):
@@ -71,6 +74,8 @@ class PostDetailView(View):
             new_comment.author = request.user
             new_comment.post = post
             new_comment.save()
+            notify.send(request.user, recipient=post.author,
+                        verb=" has commented on your post")
 
         comments = Comment.objects.filter(post=post).order_by('-created_on')
         context = {
@@ -151,6 +156,9 @@ class AddLike(LoginRequiredMixin, View):
 
         if not is_like:
             post.likes.add(request.user)
+            if request.user != post.author:
+                notify.send(request.user, recipient=post.author,
+                            verb=" has liked your post")
         if is_like:
             post.likes.remove(request.user)
 
@@ -209,6 +217,7 @@ class VoteView(View):
         return render(request, 'media/voting.html', context)
 
 
+@login_required
 def vote_user(request):
     user = request.user
     if request.method == 'POST':
@@ -219,6 +228,8 @@ def vote_user(request):
             profile_obj.votes.remove(user)
         else:
             profile_obj.votes.add(user)
+            notify.send(user, recipient=profile_obj.user,
+                        verb=" has voted your profile")
 
         vote, created = Vote.objects.get_or_create(
             user=user, value=profile_id)
@@ -230,21 +241,7 @@ def vote_user(request):
                 vote.value = 'Vote'
         vote.save()
     return redirect('voting')
-# class VoteView(View):
-#     def post(self, request, *args, **kwargs):
-#         news = News.objects.all().order_by('-date_posted')
-#         users = User.objects.filter(groups__name='Verified User')
-#         context = {
-#             'news': news,
-#             'users': users
-#         }
-#         return render(request, 'media/voting.html', context)
 
-#     def get(self, request, *args, **kwargs):
-#         news = News.objects.all().order_by('-date_posted')
-#         users = User.objects.filter(groups__name='Verified User')
-#         context = {
-#             'news': news,
-#             'users': users
-#         }
-#         return render(request, 'media/voting.html', context)
+
+def notification(request):
+    return render(request, 'media/notification.html')

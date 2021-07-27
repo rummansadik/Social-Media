@@ -1,0 +1,12 @@
+{% extends "media/base.html" %}
+{% load notifications_tags %}
+{% block content %}
+    <h2>You have {% live_notify_badge %} unread notifications.</h2>
+    {% for note in user.notifications.unread %}
+        <article class="media content-section">
+            <div class="media-body">
+                {{ note | safe}}
+            </div>
+        </article>
+    {% endfor %}
+{% endblock content %}

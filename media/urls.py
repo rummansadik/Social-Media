@@ -1,7 +1,8 @@
 from media.forms import CommentForm
 from django.urls import path
-from .views import PostListView, PostUpdateView, PostDetailView, PostDeleteView, NewsListView, NewsDetailView, AddLike, DisLike, VoteView, vote_user
+from .views import PostListView, PostUpdateView, PostDetailView, PostDeleteView, NewsListView, NewsDetailView, AddLike, DisLike, VoteView, vote_user, notification
 from media.models import News
+from django.urls import path, include
 
 urlpatterns = [
     path('', PostListView.as_view(), name='media-home'),
@@ -17,5 +18,7 @@ urlpatterns = [
     path('post/<int:pk>/dislike/', DisLike.as_view(), name='dislike'),
     path('voting/', VoteView.as_view(), name='voting'),
     path('vote/', vote_user, name='vote_user'),
+    path('notification/', notification, name='notification'),
+
 
 ]

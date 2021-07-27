@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django import urls
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, include
@@ -20,6 +21,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from users import views as user_views
 from media.models import News
+import notifications.urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -32,6 +34,8 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(extra_context={'news': News.objects.all(
     ).order_by('-date_posted')}, template_name='users/logout.html'), name='logout'),
     path('', include('media.urls')),
+    path('^inbox/notifications/',
+         include(notifications.urls, namespace='notifications')),
 ]
 
 if settings.DEBUG:

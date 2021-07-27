@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
 from PIL import Image
+from django.db.models.signals import post_save, post_delete
 
 
 class Post(models.Model):
@@ -25,12 +26,15 @@ class Post(models.Model):
     def save(self):
         super().save()
 
-        img = Image.open(self.image.path)
+        try:
+            img = Image.open(self.image.path)
 
-        if img.height > 300 or img.width > 300:
-            output_size = (300, 300)
-            img.thumbnail(output_size)
-            img.save(self.image.path)
+            if img.height > 300 or img.width > 300:
+                output_size = (300, 300)
+                img.thumbnail(output_size)
+                img.save(self.image.path)
+        except:
+            pass
 
 
 class News(models.Model):
@@ -61,18 +65,3 @@ class Comment(models.Model):
     created_on = models.DateTimeField(default=timezone.now)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey('Post', on_delete=models.CASCADE)
-
-
-class Notification(models.Model):
-    # 1 = Like, 2 = Comment
-    notification_type = models.IntegerField()
-    to_user = models.ForeignKey(
-        User, related_name='notification_to', on_delete=models.CASCADE, null=True)
-    from_user = models.ForeignKey(
-        User, related_name='notification_from', on_delete=models.CASCADE, null=True)
-    post = models.ForeignKey(
-        'Post', on_delete=models.CASCADE, related_name='+', blank=True, null=True)
-    comment = models.ForeignKey(
-        'Comment', on_delete=models.CASCADE, related_name='+', blank=True, null=True)
-    date = models.DateTimeField(default=timezone.now)
-    user_has_seen = models.BooleanField(default=False)
