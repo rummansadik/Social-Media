@@ -6,11 +6,11 @@
     {% for m in news %}
         <article class="media content-section">
             <div class="media-body">
-                <h2 class="article-title"><a href = "{% url 'news-detail' m.id %}">{{ m.title }}</a></h2>
+                <h2><a href = "{% url 'news-detail' m.id %}"  class="article-title">{{ m.title }}</a></h2>
                 <div class="article-metadata">
                     <small class="text-muted">{{ m.date_posted|date:"F d, y" }}</small>
                 </div>
-                <img src="{{ m.image.url }}" class = " mt-2">
+                <img src="{{ m.image.url }}" class = "mt-2 p-4" width="100%">
                 <br>
                 <small class="article-content">{{ m.content }}</small>
             </div>

@@ -149,3 +149,6 @@ a.article-title:hover {
   transition: 0.3%;
   cursor: pointer;
 }
+.vote-section {
+  margin-left: 10%;
+}

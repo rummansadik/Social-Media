@@ -6,9 +6,9 @@
             <div class="article-metadata">
                 <small class="text-muted">{{ object.date_posted|date:"F d, y" }}</small>
             </div>
-            <img src="{{ object.image.url }}" class = "mt-2" width="100%">
+            <img src="{{ object.image.url }}" class = "mt-2 p-2" width="100%">
             <br>
-            <small class="article-content">{{ object.content }}</small>
+            <small class="article-content pt-4">{{ object.content }}</small>
         </div>
     </article>
 {% endblock content %}

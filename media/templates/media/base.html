@@ -49,8 +49,6 @@
                     <!-- Navbar Right Side -->
                     <div class="navbar-nav">
                         {% if user.is_authenticated %}
-                            <!-- <a class="nav-item nav-link" href="#"><i class='fas fa-bell' style='color:#444444'></i></a> -->
-                            
                                 {% notifications_unread as unread_count %}
                                 <a href="{% url 'notification' %}" class="nav-item nav-link">
                                     <i class='fas fa-bell' style='color:#444444'>  
@@ -61,9 +59,12 @@
                                         {% endif %}
                                     </i>
                                 </a>
-                            <!-- <div class="nav-link">{{ show_notifications }}</div> -->
                             <a class="nav-item nav-link" href="{% url 'profile_edit' %}"><i class='fas fa-cog' style='color:#444444'></i></a>
-                            <a class="nav-item nav-link" href="{% url 'profile' %}"><img class="rounded-circle mr-2" src="{{ user.profile.image.url }}" width="30px">{{ user.username }}</a>
+                            <a class="nav-item nav-link" href="{% url 'profile' %}"><img class="rounded-circle mr-2" src="{{ user.profile.image.url }}" width="30px">{{ user.username }}
+                                {% if request.user|has_group:"Verified User"  %}
+                                    <i class="fas fa-check-circle" style="color: hsl(240, 94%, 69%);"></i>
+                                {% endif %}
+                            </a>
                             <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
                         {% else %}
                             <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>

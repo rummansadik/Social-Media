@@ -1,11 +1,16 @@
 {% extends "media/base.html" %}
 {% load crispy_forms_tags %}
+{% load custom_tags %}
 {% block content %}
     <article class="media content-section">
         <img src="{{ post.author.profile.image.url }}" class = "rounded-circle article-img">
         <div class="media-body">
             <div class="article-metadata">
-                <a class="mr-2" href="#">{{ post.author }}</a>
+                <a class="mr-2" href="#">{{ post.author }}
+                    {% if post.author|has_group:"Verified User" %}
+                            <i class="fas fa-check-circle" style="color: hsl(240, 94%, 69%);"></i>
+                        {% endif %}
+                </a>
                 <small class="text-muted">{{ post.date_posted|date:"F d, y" }}</small>
             </div>
             {% if post.image %}

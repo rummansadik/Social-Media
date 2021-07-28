@@ -14,6 +14,8 @@ from users.models import Profile
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.template import loader
 from notifications.signals import notify
+from django.utils import timezone
+from datetime import timedelta
 
 
 class PostListView(View):
@@ -223,14 +225,28 @@ def vote_user(request):
     if request.method == 'POST':
         profile_id = request.POST.get('profile_id')
         profile_obj = Profile.objects.get(id=profile_id)
+        current_time = timezone.now()
+        us = Profile.objects.get(user=user)
+        # if user in profile_obj.votes.all():
+        #     if current_time > us.votesubmitted + timedelta(days=1):
+        #         profile_obj.amountofvotes += 1
+        #         us.votesubmitted = timezone.now()
+        #         notify.send(user, recipient=profile_obj.user,
+        #                     verb=" has voted your profile")
 
-        if user in profile_obj.votes.all():
-            profile_obj.votes.remove(user)
-        else:
-            profile_obj.votes.add(user)
+        # else:
+        #     profile_obj.votes.add(user)
+        #     profile_obj.amountofvotes += 1
+        #     us.votesubmitted = timezone.now()
+        #     notify.send(user, recipient=profile_obj.user,
+        #                 verb=" has voted your profile")
+        if current_time > us.votesubmitted + timedelta(days=1):
+            profile_obj.amountofvotes += 1
+            us.votesubmitted = timezone.now()
             notify.send(user, recipient=profile_obj.user,
                         verb=" has voted your profile")
-
+        profile_obj.save()
+        us.save()
         vote, created = Vote.objects.get_or_create(
             user=user, value=profile_id)
 
