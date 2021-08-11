@@ -4,8 +4,8 @@ from .models import Post, Comment
 
 class PostForm(forms.ModelForm):
     content = forms.CharField(label='', widget=forms.Textarea(
-        attrs={'rows': '3', 'placeholder': 'What\'s on your mind?'}))
-    image = forms.ImageField(required=False)
+        attrs={'rows': '2', 'placeholder': 'What\'s on your mind?'}))
+    image = forms.ImageField(label='', required=False)
 
     class Meta:
         model = Post

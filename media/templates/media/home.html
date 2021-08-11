@@ -6,15 +6,15 @@
     {% if request.user|has_group:"Verified User" %}
         <!-- Create New Post -->
         {% if user.is_authenticated %}
-            <div class="content-section">
+            <div class="content-section post-data">
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <fieldset class="form-group">
-                        <legend class="border-bottom mb-4">Add a Post!</legend>
-                        {{ pc_form | crispy }}
+                    <fieldset class="form-group row p-2">
+                        <div class="col-md-2"><img src="{{ user.profile.image.url }}" class = "rounded-circle article-img"></div>
+                        <div class="col-md-10 post-form">{{ pc_form | crispy }}</div>
                     </fieldset>
                     <div class="form-group">
-                        <button class="btn btn-outline-info" type="submit">Post</button>
+                        <button class="btn btn-outline-info post-btn" type="submit">Post</button>
                     </div>
                 </form>
             </div>
@@ -22,12 +22,10 @@
     {% endif %}
 
 
-    <h4 class="content-section">Click On The Post To Like and Comment</h4>
-
 
     <!-- All Posts -->
     {% for post in posts %}
-        <article class="media content-section">
+        <article class="media content-section view-post">
             <img src="{{ post.author.profile.image.url }}" class = "rounded-circle article-img">
             <div class="media-body">
                 <div class="article-metadata">

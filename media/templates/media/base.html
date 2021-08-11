@@ -19,12 +19,20 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" type = "text/css" href="{% static 'media/main.css' %}">
 
+    
+
     <!-- Title -->
     {% if title %}
         <title>Socio Med - {{ title }}</title>
     {% else %}
         <title>Socio Med</title>
     {% endif %}
+
+    <link rel = "icon" 
+        href = "/images/feed.png" 
+        type = "image/x-icon">
+
+
 </head>
 
 
@@ -35,7 +43,7 @@
     <header class="site-header">
         <nav class="navbar navbar-expand-md navbar-light bg-steel fixed-top">
             <div class="container">
-                <a class="navbar-brand mr-4" href="{% url 'media-home' %}">Socio Med</a>
+                <a class="navbar-brand mr-4 text-white" href="{% url 'media-home' %}">Socio<span class="dot-1">.</span>Med<span class="dot-2">.</span></a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -51,21 +59,27 @@
                         {% if user.is_authenticated %}
                                 {% notifications_unread as unread_count %}
                                 <a href="{% url 'notification' %}" class="nav-item nav-link">
-                                    <i class='fas fa-bell' style='color:#444444'>  
+                                    <i class='fas fa-bell' style='color:#fff'>  
                                         {% if unread_count %}
-                                            {% live_notify_badge %}
-                                        {% else %}
-                                            0
+                                            <i class="fas fa-circle notify-dot" style='color:red; font-size: 7px;'></i>
                                         {% endif %}
                                     </i>
                                 </a>
-                            <a class="nav-item nav-link" href="{% url 'profile_edit' %}"><i class='fas fa-cog' style='color:#444444'></i></a>
-                            <a class="nav-item nav-link" href="{% url 'profile' %}"><img class="rounded-circle mr-2" src="{{ user.profile.image.url }}" width="30px">{{ user.username }}
-                                {% if request.user|has_group:"Verified User"  %}
-                                    <i class="fas fa-check-circle" style="color: hsl(240, 94%, 69%);"></i>
-                                {% endif %}
-                            </a>
-                            <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
+                            <a class="nav-item nav-link" href="{% url 'profile_edit' %}"><i class='fas fa-cog' style='color:#fff'></i></a>
+                            
+                            <div class="dropdown">
+                                <button class="btn dropdown-toggle text-white nav-link" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <img class="rounded-circle mr-2" src="{{ user.profile.image.url }}" width="30px">
+                                    {{ user.username }}
+                                    {% if request.user|has_group:"Verified User"  %}
+                                        <i class="fas fa-check-circle" style="color: teal;"></i>
+                                    {% endif %}
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item"  href="{% url 'profile' %}"><i class='fas fa-user-circle mr-4' style='color:red'></i>Profile</a>
+                                    <a class="dropdown-item " href="{% url 'logout' %}"><i class="fas fa-sign-out-alt mr-4" style='color:red'></i>Logout</a>
+                                </div>
+                              </div>
                         {% else %}
                             <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
                             <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
@@ -82,7 +96,7 @@
 
             <!-- Left Sidebar -->
             <div class="col-md-3 left-sidebar">
-                <div class="content-section">
+                <div class="left-bar">
                     <p class='text-muted'>
                         <ul class="list-group">
                             <li class="list-group-item list-group-item-light position-relative"><i class='fas fa-home mr-4' style='color:red'></i><a href="{% url 'media-home' %}" class="stretched-link">Home</a></li>
@@ -114,19 +128,21 @@
             <!-- Right Sidebar -->
             <div class="col-md-3">
                 <div class="content-section">
-                    <h3>News Updates</h3>
+                    <h4 class="text-center">News Updates</h4>
                     <p class='text-muted'>
                         <ul class="list-group">
                             {% for m in news %}
-                                <article class="media content-section position-relative">
+                                <article class="media news-item position-relative">
                                     <a href = "{% url 'news-detail' m.id %}" class="stretched-link">
-                                    <img src="{{ m.image.url }}" class = "article-img mt-2">
+                                    <img src="{{ m.image.url }}" class = "news-img mt-2">
                                     </a>
                                     <div class="media-body">
-                                        <div class="article-metadata">
+                                        <div class="news-metadata">
                                             <small class="text-muted">{{ m.date_posted|date:"F d, y" }}</small>
                                         </div>
-                                        <small class="article-content">{{ m.title }}</small>
+                                        <div class="news-content">{{ m.title }}</div>
+                                        
+                                        
                                     </div>
                                 </article>
                             {% endfor %}
